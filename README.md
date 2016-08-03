@@ -14,7 +14,47 @@ Timberjack is a simple, unintrusive network activity logger. Log every request y
 - Pretty printed `JSON` responses
 - Useful for debugging and development, but probably best not to ship your app with verbose logging.
 
-<img src="https://raw.githubusercontent.com/andysmart/Timberjack/master/Assets/screenshot.jpg" width="521px" height="422px" />
+```bash
+Request: POST http://localhost/auth/clientAuth
+Headers: [
+  Content-Length : 50
+  Content-Type : application/json
+]
+JSON: {
+  "identifier" : "13800000000",
+  "password" : "12345678"
+}
+---------------------
+Response: http://localhost/auth/clientAuth
+Status: 200 - No Error
+Headers: [
+  Vary : X-HTTP-Method-Override
+  X-Powered-By : Sails <sailsjs.org>
+  Content-Length : 726
+  Content-Type : application/json; charset=utf-8
+  Date : Wed, 03 Aug 2016 06:15:57 GMT
+  Etag : W/"2d6-Bf3fbK1NkF1VTo0N/15fDQ"
+  Connection : keep-alive
+]
+Duration: 0.167722046375275s
+JSON: {
+  "headImg" : "qwerqqewqerqe",
+  "updatedAt" : "2016-08-03T06:07:04.183Z",
+  "id" : "57997ab8b6df75af41de02d8",
+  "sex" : "female",
+  "mobile" : "15189345238",
+  "owner" : "57997ab8b6df75af41de02d5",
+  "birthDay" : "2016-08-03T00:00:00.000Z",
+  "birthday" : "1970-01-01",
+  "createdBy" : "57997ab8b6df75af41de02d5",
+  "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI1Nzk5N2FiOGI2ZGY3NWFmNDFkZTAyZDUiLCJpYXQiOjE0NzAyMDQ5NTd9.dVP-h9WqXxsx1NpJLdZX5izZWCeyk4GFL6foB4d92hs",
+  "friends" : [
+    "5798d337b4e857d320412a61"
+  ],
+  "createdAt" : "2016-07-28T03:23:36.671Z",
+  "name" : "名称"
+}
+```
 
 ##Installation
 
@@ -28,7 +68,7 @@ Add the following to your Podfile
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Timberjack'
+pod 'Timberjack', :git => 'git@github.com:senpng/Timberjack.git'
 
 ````
 
@@ -39,7 +79,7 @@ Then install with `pod install`
 Add the following to your Cartfile
 
 ````ruby
-github "andysmart/Timberjack" >= 0.0.1
+github "senpng/Timberjack" >= 0.0.1
 ````
 
 ##Usage
