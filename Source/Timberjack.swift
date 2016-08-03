@@ -147,6 +147,26 @@ public class Timberjack: NSURLProtocol {
             if let headers = request.allHTTPHeaderFields {
                 self.logHeaders(headers)
             }
+            if let body = request.HTTPBody {
+                self.logBody(body);
+            }
+        }
+    }
+    
+    public func logBody(body: NSData) {
+        do {
+            let json = try NSJSONSerialization.JSONObjectWithData(body, options: .MutableContainers)
+            let pretty = try NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted)
+            
+            if let string = NSString(data: pretty, encoding: NSUTF8StringEncoding) {
+                print("JSON: \(string)")
+            }
+        }
+            
+        catch {
+            if let string = NSString(data: body, encoding: NSUTF8StringEncoding) {
+                print("Data: \(string)")
+            }
         }
     }
     
