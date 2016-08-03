@@ -147,9 +147,33 @@ public class Timberjack: NSURLProtocol {
             if let headers = request.allHTTPHeaderFields {
                 self.logHeaders(headers)
             }
-            if let body = request.HTTPBody {
+            if let body = self.httpBodyData(request) where body.length > 0 {
                 self.logBody(body);
             }
+        }
+    }
+    
+    internal func httpBodyData(request: NSURLRequest) -> NSData? {
+        if let stream = request.HTTPBodyStream {
+            let data = NSMutableData()
+            stream.open()
+            let bufferSize = 4096
+            let buffer = UnsafeMutablePointer<UInt8>.alloc(bufferSize)
+            while stream.hasBytesAvailable {
+                let bytesRead = stream.read(buffer, maxLength: bufferSize)
+                if bytesRead > 0 {
+                    let readData = NSData(bytes: buffer, length: bytesRead)
+                    data.appendData(readData)
+                } else if bytesRead < 0 {
+                    print("error occured while reading HTTPBodyStream: \(bytesRead)")
+                } else {
+                    break
+                }
+            }
+            stream.close()
+            return data
+        } else {
+            return request.HTTPBody
         }
     }
     
