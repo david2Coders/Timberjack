@@ -147,9 +147,53 @@ public class Timberjack: URLProtocol {
             if let headers = request.allHTTPHeaderFields {
                 self.logHeaders(headers as [String : AnyObject])
             }
+            if let body = self.httpBodyData(request) , body.count > 0 {
+                self.logBody(body)
+            }
         }
     }
-
+    
+    internal func httpBodyData(_ request: URLRequest) -> Data? {
+        if let stream = request.httpBodyStream {
+            let data = NSMutableData()
+            stream.open()
+            let bufferSize = 4096
+            let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+            while stream.hasBytesAvailable {
+                let bytesRead = stream.read(buffer, maxLength: bufferSize)
+                if bytesRead > 0 {
+                    let readData = Data(bytes: UnsafePointer<UInt8>(buffer), count: bytesRead)
+                    data.append(readData)
+                } else if bytesRead < 0 {
+                    print("error occured while reading HTTPBodyStream: \(bytesRead)")
+                } else {
+                    break
+                }
+            }
+            stream.close()
+            return data as Data
+        } else {
+            return request.httpBody
+        }
+    }
+    
+    public func logBody(_ body: Data) {
+        do {
+            let json = try JSONSerialization.jsonObject(with: body, options: .mutableContainers)
+            let pretty = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+            
+            if let string = NSString(data: pretty, encoding: String.Encoding.utf8.rawValue) {
+                print("JSON: \(string)")
+            }
+        }
+            
+        catch {
+            if let string = NSString(data: body, encoding: String.Encoding.utf8.rawValue) {
+                print("Data: \(string)")
+            }
+        }
+    }
+    
     public func logResponse(_ response: URLResponse, data: Data? = nil) {
         logDivider()
         
